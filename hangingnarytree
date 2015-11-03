@@ -1,0 +1,127 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct Node
+{
+	int data;
+	struct Node *child,*siblings;
+};
+struct Node *createNode(int value)
+{
+	struct Node *node= (struct Node *)malloc(sizeof(struct Node));
+	node->data = value;
+	node->child =  NULL;
+	node->siblings = NULL;
+	return node;
+}
+struct Node *createNArrayTree()
+{
+	struct Node *root,*temp,*curr;
+	curr = root = createNode(1);
+	//children of 29
+	curr->child = createNode(2);
+	curr->child->siblings = createNode(3);
+	curr->child->siblings->siblings = createNode(4);
+	
+
+	//children of 13
+	curr =  root->child;
+	curr->child = createNode(5);
+	curr->child->siblings = createNode(6);
+	//children of 70
+	curr = root->child->child;
+	curr->child = createNode(11);
+	curr->child->siblings = createNode(12);
+	curr->child->siblings->siblings = createNode(13);
+	//children of 10
+	curr = root->child->child->child;
+	curr->child = createNode(20);
+	curr->child->siblings = createNode(21);
+	//children of 57
+	curr =  root->child->child->siblings;
+	curr->child = createNode(14);
+	
+	/////////////////////////////////////////////////////////////////////
+	//children of 75
+	curr = root->child->siblings;
+	curr->child = createNode(7);
+	curr->child->siblings = createNode(8);
+	//children of 45
+	curr = root->child->siblings->child;
+	curr->child = createNode(15);
+	//children of 78
+	curr = root->child->siblings->child->siblings;
+	curr->child = createNode(16);
+	curr->child->siblings = createNode(17);
+	
+	////////////////////////////////////////////////////////////////////////////
+	//children of 43
+	curr = root->child->siblings->siblings;
+	curr->child = createNode(9);
+	curr->child->siblings = createNode(10);
+	//children of 55
+	curr = root->child->siblings->siblings->child->siblings;
+	curr->child = createNode(18);
+	curr->child->siblings = createNode(19);
+	return root;
+}
+
+void printNode(struct Node *root)
+{
+	if(root == NULL)
+	{
+		return;		
+	}
+	printf("%d\n",root->data);
+	printNode(root->child);
+	printNode(root->siblings);
+}
+struct Node *newroot;
+struct Node * changeRelations(struct Node *root,struct Node *parent,struct Node *sibParent)
+{
+	struct Node *node,*pre;
+	if(root == NULL)return;
+	if(sibParent)
+		sibParent->siblings=root->siblings;
+	else if(parent)
+		parent->child=root->siblings;
+	for(pre = node = root->child;node!=NULL;node=node->siblings)
+		pre = node;
+	if(pre == NULL)
+		root->child=parent;
+	else
+		pre->siblings=parent;
+	root->siblings=NULL;
+	return parent;
+}
+struct Node * changeRoot(struct Node *root,int value,struct Node *parent,struct Node *sibParent)
+{
+	struct Node *pre = NULL,*sibChild;
+	if(root == NULL)return;
+	if(root->data ==  value)
+	{
+		newroot = root;
+		return changeRelations(root,parent,sibParent);
+	}
+	pre = changeRoot(root->child,value,root,NULL);
+	if(pre == root)
+	{
+		return changeRelations(root,parent,sibParent);
+	}
+	if(pre)
+		return pre;
+	return changeRoot(root->siblings,value,parent,root);
+}
+
+void main()
+{
+	int findingValue=21;
+	struct Node *root;
+	root =  createNArrayTree();
+	printf("Please Enter the ")
+	scanf("%d",&findingValue);
+	changeRoot(root,findingValue,NULL,NULL);
+	if(newroot)
+		root = newroot;
+	printNode(root);
+}
