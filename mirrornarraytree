@@ -22,7 +22,6 @@ struct Node *createNArrayTree()
 	curr->child = createNode(2);
 	curr->child->siblings = createNode(3);
 	curr->child->siblings->siblings = createNode(4);
-	
 
 	//children of 13
 	curr =  root->child;
