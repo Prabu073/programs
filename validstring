@@ -1,0 +1,23 @@
+#include<stdio.h>
+#include<string.h>
+
+int getValidStringLen(char *string)
+{
+	int i,len,count=0,max=0;
+	len = strlen(string);
+	for(i=0;i<len;i++)
+	{
+		if(string[i] =='(')
+			count++;
+		else if(count > 0)
+			{max++;count--;}
+	}
+	return max*2;
+}
+
+void main()
+{
+	char string[] ="()(())(())()))(())((";
+	int len = getValidStringLen(string);
+	printf("Valid String len of String = %s is %d\n",string,len);
+}
