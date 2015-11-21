@@ -1,0 +1,134 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node
+{
+	int data;
+	struct node *left,*right;
+	int height;
+};
+int height(struct node *root)
+{
+	if(root)
+		return root->height;
+	return -1;
+}
+int max(int a, int b)
+{
+	return a>b?a:b;
+}
+void setHeight(struct node *root)
+{
+	root->height=max(height(root->left),height(root->right))+1;
+}
+struct node * rotateLeft(struct node *root)
+{
+	//printf("rotateLeft := %d\n",root->data);
+	struct node *newroot = root->left;
+	root->left=newroot->right;
+	newroot->right=root;
+	setHeight(newroot);
+	setHeight(root);
+	return newroot;
+}
+struct node * rotateRight(struct node *root)
+{
+	//printf("rotateRight := %d\n",root->data);
+	struct node *newroot=root->right;
+	root->right=newroot->left;
+	newroot->left=root;
+	setHeight(newroot);
+	setHeight(root);
+	return newroot;
+}
+struct node * doubleRotateLeft(struct node *root)
+{
+	//printf("doubleRotateLeft := %d\n",root->data);
+	root->left = rotateRight(root->left);
+	return rotateLeft(root);
+}
+struct node * doubleRotateRight(struct node *root)
+{
+	//printf("doubleRotateRight := %d\n",root->data);
+	root->right =rotateLeft(root->right);
+	return rotateRight(root);
+}
+struct node *newNode(int data)
+{
+	struct node *temp = (struct node*)malloc(sizeof(struct node));
+	temp->data=data;
+	temp->left=temp->right=NULL;
+	temp->height=0;
+	return temp;
+}
+struct node * insert(struct node *root, int data)
+{
+	if(root == NULL)
+	{
+		root = newNode(data);
+	}
+	else if(data<root->data)
+	{
+		root->left= insert(root->left,data);
+		if(height(root->left)-height(root->right)==2)
+		{
+			//printf("\t** while insert %d** \n",data);
+			if(data<root->left->data)
+				root =  rotateLeft(root);
+			else
+				root = doubleRotateLeft(root);
+		}
+	}
+	else if(data > root->data)
+	{
+		root->right= insert(root->right,data);
+		if(height(root->right)-height(root->left)==2)
+		{
+			//printf("\t** while insert %d** \n",data);
+			if(data > root->right->data)
+				root = rotateRight(root);
+			else
+				root = doubleRotateRight(root);
+		}
+	}
+	setHeight(root);
+	return root;
+}
+void preOrder(struct node *root)
+{
+	if(root != NULL)
+	{
+		printf("%d\n",root->data);
+		preOrder(root->left);
+		preOrder(root->right);
+	}
+}
+
+void postOrder(struct node *root)
+{
+	if(root != NULL)
+	{
+		postOrder(root->left);
+		postOrder(root->right);
+		printf("%d\n",root->data);
+	}
+}
+
+void main()
+{
+	struct node *root = NULL;
+	root = insert(root,60);
+	root = insert(root,80);
+	root = insert(root,65);
+	root = insert(root,90);
+	root = insert(root,100);
+	root = insert(root,70);
+	root = insert(root,20);
+	root = insert(root,30);
+	root = insert(root,35);
+	printf("\t**Pre Order**\n");
+	preOrder(root);
+	printf("\t**Post Order**\n");
+	postOrder(root);
+}
+
