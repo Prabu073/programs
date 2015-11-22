@@ -1,0 +1,214 @@
+#include<stdio.h>
+#include<stdlib.h>
+//// Hash map implemention starts here
+struct Hash
+{
+	int key;
+	int value;
+	struct Hash *left,*right;
+	int height;
+};
+struct Hash *map = NULL;
+int height(struct Hash *root)
+{
+	if(root)
+		return root->height;
+	return -1;
+}
+int max(int a, int b)
+{
+	return a>b?a:b;
+}
+void setHeight(struct Hash *root)
+{
+	root->height=max(height(root->left),height(root->right))+1;
+}
+struct Hash * rotateLeft(struct Hash *root)
+{
+	struct Hash *newroot = root->left;
+	root->left=newroot->right;
+	newroot->right=root;
+	setHeight(newroot);
+	setHeight(root);
+	return newroot;
+}
+struct Hash * rotateRight(struct Hash *root)
+{
+	struct Hash *newroot=root->right;
+	root->right=newroot->left;
+	newroot->left=root;
+	setHeight(newroot);
+	setHeight(root);
+	return newroot;
+}
+struct Hash * doubleRotateLeft(struct Hash *root)
+{
+	root->left = rotateRight(root->left);
+	return rotateLeft(root);
+}
+struct Hash * doubleRotateRight(struct Hash *root)
+{
+	root->right =rotateLeft(root->right);
+	return rotateRight(root);
+}
+struct Hash *newNode(int value,int key)
+{
+	struct Hash *temp = (struct Hash*)malloc(sizeof(struct Hash));
+	temp->value=value;
+	temp->key=key;
+	temp->left=temp->right=NULL;
+	temp->height=0;
+	return temp;
+}
+struct Hash * insert(struct Hash *root, int value, int key)
+{
+	if(root == NULL)
+	{
+		root = newNode(value,key);
+	}
+	else if(key<root->key)
+	{
+		root->left= insert(root->left,value,key);
+		if(height(root->left)-height(root->right)==2)
+		{
+			if(value<root->left->value)
+				root =  rotateLeft(root);
+			else
+				root = doubleRotateLeft(root);
+		}
+	}
+	else if(key > root->key)
+	{
+		root->right= insert(root->right,value,key);
+		if(height(root->right)-height(root->left)==2)
+		{
+			if(value > root->right->value)
+				root = rotateRight(root);
+			else
+				root = doubleRotateRight(root);
+		}
+	}
+	else
+	{
+		root->value=value;
+	}
+	setHeight(root);
+	return root;
+}
+void inOrder(struct  Hash *root)
+{
+	if(root != NULL)
+	{
+		inOrder(root->left);
+		printf("key = %d : value = %d\n",root->key,root->value);
+		inOrder(root->right);
+		
+	}
+}
+struct Hash * search(struct Hash *root,int key)
+{
+	if(root == NULL) 
+		return root;
+	else if(root->key == key) 
+		return root;
+	struct Hash *found = search(root->left,key);
+	if(found) 
+		return found;
+	search(root->right,key);
+}
+
+void get(int key)
+{
+	struct Hash * temp = search(map,key);
+	if(temp)
+		printf("\nKey : %d value : %d",key,temp->value);
+	else
+		printf("\nException Occured :P");
+}
+void put(int key,int value)
+{
+	map = insert(map,value,key);
+}
+void hasKey(int key)
+{
+	struct Hash * temp = search(map,key);
+	if(temp)
+		printf("\nKey:%d Found",key);
+	else
+		printf("\nkey:%d Not Found",key);
+}
+void printMap()
+{
+	inOrder(map);
+}
+//// Hash map implemention ends here
+struct Tree
+{
+	int data;
+	struct Tree *left,*right;
+};
+struct Tree *newTreeNode(int data)
+{
+	struct Tree *temp=(struct Tree*)malloc(sizeof(struct Tree));
+	temp->data=data;
+	temp->left=temp->right=NULL;
+}
+void preOrder(struct Tree *root)
+{
+	if(root != NULL)
+	{
+		printf("%d\n",root->data);
+		preOrder(root->left);
+		preOrder(root->right);
+	}
+}
+struct Tree *createTree(struct Tree *root, int data)
+{
+	if(root == NULL)
+	{
+		return newTreeNode(data);
+	}
+	else if(data < root->data)
+	{
+		root->left=createTree(root->left,data);
+	}
+	else if(data > root->data)
+	{
+		root->right=createTree(root->right,data);
+	}
+	return root;
+}
+void BVT(struct Tree *root,int key)
+{
+	if(root != NULL)
+	{
+		//printf("%d\n",root->data);
+		put(key,root->data);
+		BVT(root->left,key-1);
+		BVT(root->right,key+1);
+	}
+}
+void bottomViewTree(struct Tree *root)
+{
+	BVT(root,0);
+	if(map == NULL)
+		return;
+	printf("\t***Bottom View of Tree***\n");
+	printMap(map);
+}
+
+void main()
+{
+	struct Tree *root = NULL;
+	//int input1[] = {10,20,30,40,50,60,70,80,90};
+	//int input1[] = {20,30,60,90,80,100,70,35,40};
+	//int input1[] = {90,80,70,60,50,40,30,20,10};
+	int input1[] = {20,8,22,5,3,4,25,10,14,28};
+	int *input = &input1[0];
+	int i,len = 9;
+	for(i=0;i<len;i++)
+	{
+		root = createTree(root,input[i]);
+	}
+	bottomViewTree(root);
+}
