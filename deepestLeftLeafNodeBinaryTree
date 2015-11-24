@@ -1,0 +1,73 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct Node
+{
+    int val;
+    struct Node *left, *right;
+};
+struct ListNode
+{
+    struct Node * data;
+    struct ListNode *next;
+};
+struct List
+{
+    int level;
+    struct ListNode *head;
+};
+struct Node *newNode(int data)
+{
+    struct Node *temp = (struct Node *)malloc(sizeof(struct Node));
+    temp->val = data;
+    temp->left = temp->right =  NULL;
+    return temp;
+}
+void deepestLeftLeafUtil(struct Node *root, int lvl, int isLeft,struct List *list)
+{
+    if (root == NULL)
+        return;
+    if (isLeft == 1 && !root->left&& lvl >= list->level)
+    {
+        struct ListNode *temp = (struct ListNode*)malloc(sizeof(struct ListNode));
+        temp->data=root;
+        temp->next = NULL;
+        if(lvl == list->level)
+        {
+            temp->next=list->head;
+        }
+        else
+        {
+            //free(temp);
+        }
+        list->head=temp;
+        list->level = lvl;
+    }
+    deepestLeftLeafUtil(root->left, lvl+1, 1, list);
+    deepestLeftLeafUtil(root->right, lvl+1, 0, list);
+}
+void deepestLeftLeaf(struct Node *root)
+{
+    struct List *list = (struct List *)malloc(sizeof(struct List));
+    list->level=0;
+    list->head=NULL;
+    struct ListNode *head = NULL;
+    deepestLeftLeafUtil(root, 0, 0, list);
+    for(head = list->head; head!=NULL ; head= head->next)
+    {
+        printf("%d ",head->data->val);
+    }
+}
+void main()
+{
+    struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(3);
+    root->left->left = newNode(4);
+    root->right->left = newNode(5);
+    root->right->right = newNode(6);
+    root->right->left->right = newNode(7);
+    root->right->right->right = newNode(8);
+    root->right->left->right->left = newNode(9);
+    root->right->right->right->left = newNode(10);
+    deepestLeftLeaf(root);
+}
