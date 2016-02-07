@@ -1,45 +1,45 @@
 private static void BeanToJson(Object object, JSONObject json) throws Exception
+{
+	if(object != null)
 	{
-		if(object != null)
+		PropertyDescriptor[] property = null;
+		property = Introspector.getBeanInfo(object.getClass(),Object.class).getPropertyDescriptors();
+		for(PropertyDescriptor each : property)
 		{
-			PropertyDescriptor[] property = null;
-			property = Introspector.getBeanInfo(object.getClass(),Object.class).getPropertyDescriptors();
-			for(PropertyDescriptor each : property)
+			try
 			{
-				try
+				String propertyName = null;
+				Object obj = each.getReadMethod().invoke(object);
+				if(ClassUtils.isPrimitiveOrWrapper(obj.getClass()) || obj instanceof String)
 				{
-					String propertyName = null;
-					Object obj = each.getReadMethod().invoke(object);
-					if(ClassUtils.isPrimitiveOrWrapper(obj.getClass()) || obj instanceof String)
-					{
-						propertyName = each.getName();
-						json.put(propertyName,obj);
-					}
-					else if(obj instanceof ArrayList)
-					{
-						ArrayList<?> arrayList = (ArrayList<?>) obj;
-						JSONArray jsonArray = new JSONArray();
-						propertyName = each.getName();
-						for(int index =0; index <  arrayList.size(); index++)
-						{
-							JSONObject newJson = new JSONObject();
-							BeanToJson(arrayList.get(index),newJson);
-							jsonArray.put(newJson);
-						}
-						json.put(propertyName, jsonArray);
-					}
-					else
+					propertyName = each.getName();
+					json.put(propertyName,obj);
+				}
+				else if(obj instanceof ArrayList)
+				{
+					ArrayList<?> arrayList = (ArrayList<?>) obj;
+					JSONArray jsonArray = new JSONArray();
+					propertyName = each.getName();
+					for(int index =0; index <  arrayList.size(); index++)
 					{
 						JSONObject newJson = new JSONObject();
-						propertyName = each.getName();
-						BeanToJson(obj,newJson);
-						json.put(propertyName,newJson);
+						BeanToJson(arrayList.get(index),newJson);
+						jsonArray.put(newJson);
 					}
+					json.put(propertyName, jsonArray);
 				}
-				catch(Exception e)
+				else
 				{
-					e.printStackTrace();
+					JSONObject newJson = new JSONObject();
+					propertyName = each.getName();
+					BeanToJson(obj,newJson);
+					json.put(propertyName,newJson);
 				}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
 			}
 		}
 	}
+}
