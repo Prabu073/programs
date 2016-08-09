@@ -22,9 +22,9 @@ public class TopologicalSort
 		}
 		List<T> list = new ArrayList<T>();
 		while(stack.isEmpty() == false)
-        {
-        	list.add(stack.pop().getId());
-        }
+        	{
+        		list.add(stack.pop().getId());
+        	}
 		return list;
 	}
 	private <T> void TopologicalUtil(Graph<T>.Vertex v, Stack<Graph<T>.Vertex> stack,Set<Graph<T>.Vertex> visited)
