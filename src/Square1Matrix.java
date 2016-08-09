@@ -1,5 +1,3 @@
-//$Id$
-
 public class Square1Matrix 
 {
 	public static void main(String[] args)throws Exception
