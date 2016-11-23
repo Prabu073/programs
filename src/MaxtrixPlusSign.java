@@ -13,7 +13,7 @@ public class MatrixPlusSign
 		int n = a[0].length;
 		System.out.println(findPlus(a,m,n));
 	}
-	static int findPlus(int[][] a,int n,int m)
+	static int findPlus(int[][] a,int m,int n)
 	{
 		int max = 0;
 		for(int i = 1;i<n-1;i++)
