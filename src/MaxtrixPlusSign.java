@@ -22,9 +22,7 @@ public class MatrixPlusSign
 			{
 				if(a[i][j]==1)
 				{
-					int temp = findMaxPlus(a,i,j,m,n,max);
-					if(temp>max)
-						max=temp;
+					max = findMaxPlus(a,i,j,m,n,max);
 				}
 			}
 		}
@@ -36,17 +34,17 @@ public class MatrixPlusSign
 		for(int j=jj-1,i=ii;j>=0&&a[i][j]==1;j--,size++);
 		currMax = size;
 		if(max>=currMax)
-			return 0;
+			return max;
 		for(int i=ii+1,j=jj;i<n&&a[i][j]==1&&size>0;i++,size--);
 		currMax-=size;
 		size = currMax;
 		if(max>=currMax)
-			return 0;
+			return max;
 		for(int i=ii,j=jj+1;j<m&&a[i][j]==1&&size>0;j++,size--);
 		currMax-=size;
 		size = currMax;
 		if(max>=currMax)
-			return 0;
+			return max;
 		for(int i=ii-1,j=jj;i>=0&&a[i][j]==1&&size>0;i--,size--);
 		currMax-=size;
 		return currMax;
