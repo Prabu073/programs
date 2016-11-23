@@ -47,6 +47,8 @@ public class MatrixPlusSign
 			return max;
 		for(int i=ii-1,j=jj;i>=0&&a[i][j]==1&&size>0;i--,size--);
 		currMax-=size;
+		if(max>=currMax)
+			return max;
 		return currMax;
 	}
 }
