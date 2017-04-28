@@ -89,6 +89,7 @@ void mirror(struct Node *root, struct Node *parentSib,struct Node *parent)
 		root->siblings = NULL;
 	}
 }
+
 void main()
 {
 	struct Node *root =  createNArrayTree();
